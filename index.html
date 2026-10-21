@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap Front-end</title>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #d9dfe9;
+    --accent: #2f5fd0;
+    --accent-soft: #e8eefc;
+    --ok: #1f9d63;
+    --ok-soft: #e4f6ed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    padding: 40px 20px 60px;
+  }
+  .container { max-width: 880px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 36px; }
+  header .tag {
+    display: inline-block; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 14px; font-weight: 600;
+  }
+  header h1 { font-size: 2.1rem; line-height: 1.2; margin-bottom: 10px; }
+  header p { color: var(--muted); max-width: 560px; margin: 0 auto; }
+
+  /* Progresso geral */
+  .overall {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 22px; margin: 0 auto 36px; max-width: 880px;
+  }
+  .overall-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .overall-top strong { font-size: 1rem; }
+  .overall-top span { color: var(--muted); font-size: .9rem; }
+  .bar { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width .3s ease, background .3s; }
+  .bar.done > i { background: var(--ok); }
+  .reset {
+    font: inherit; font-size: .8rem; color: var(--muted); background: none;
+    border: 1px solid var(--line); border-radius: 8px; padding: 5px 12px; cursor: pointer;
+  }
+  .reset:hover { color: var(--ink); border-color: var(--muted); }
+
+  .timeline { position: relative; display: grid; gap: 24px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 23px; top: 8px; bottom: 8px;
+    width: 2px; background: var(--line);
+  }
+
+  .step { position: relative; display: grid; grid-template-columns: 48px 1fr; gap: 18px; }
+  .badge {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    border: 5px solid var(--bg); z-index: 1; transition: background .3s;
+  }
+  .step.complete .badge { background: var(--ok); }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 22px 24px;
+    box-shadow: 0 1px 2px rgba(20, 30, 60, .05);
+    transition: border-color .3s;
+  }
+  .step.complete .card { border-color: var(--ok); }
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .card .phase { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); font-weight: 700; }
+  .step.complete .phase { color: var(--ok); }
+  .count { font-size: .8rem; font-weight: 600; color: var(--muted); background: var(--bg); padding: 2px 10px; border-radius: 999px; }
+  .step.complete .count { color: var(--ok); background: var(--ok-soft); }
+  .card h2 { font-size: 1.3rem; margin: 2px 0 6px; }
+  .card .desc { color: var(--muted); margin-bottom: 14px; }
+  .card ul { list-style: none; display: grid; gap: 4px; margin-bottom: 16px; }
+
+  /* Checkbox */
+  .card label {
+    display: flex; align-items: flex-start; gap: 12px; cursor: pointer;
+    padding: 6px 8px; margin: 0 -8px; border-radius: 8px;
+  }
+  .card label:hover { background: var(--bg); }
+  .card input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    flex: 0 0 20px; width: 20px; height: 20px; margin-top: 2px;
+    border: 2px solid var(--accent); border-radius: 6px; background: #fff;
+    display: grid; place-content: center; cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .card input[type="checkbox"]::after {
+    content: ""; width: 5px; height: 10px; margin-top: -2px;
+    border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg) scale(0);
+    transition: transform .12s;
+  }
+  .card input[type="checkbox"]:checked { background: var(--ok); border-color: var(--ok); }
+  .card input[type="checkbox"]:checked::after { transform: rotate(45deg) scale(1); }
+  .card input[type="checkbox"]:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 2px; }
+  .card input[type="checkbox"]:checked + span { color: var(--muted); text-decoration: line-through; }
+
+  .meta { font-size: .85rem; color: var(--muted); margin-bottom: 14px; }
+
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 600; font-size: .9rem;
+    color: #fff; background: var(--accent);
+    padding: 9px 16px; border-radius: 8px; transition: background .15s;
+  }
+  .btn:hover { background: #244aa8; }
+  .url { display: none; font-size: .75rem; color: var(--muted); word-break: break-all; margin-top: 6px; }
+
+  footer { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 40px; }
+
+  @media (max-width: 560px) {
+    header h1 { font-size: 1.6rem; }
+    .timeline::before { left: 17px; }
+    .step { grid-template-columns: 36px 1fr; gap: 12px; }
+    .badge { width: 36px; height: 36px; font-size: .95rem; border-width: 3px; }
+    .card { padding: 18px; }
+  }
+
+  @page { size: A4; margin: 14mm; }
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: #fff; padding: 0; font-size: 11pt; }
+    .container { max-width: 100%; }
+    header { margin-bottom: 14px; }
+    header h1 { font-size: 22pt; }
+    .overall { margin-bottom: 18px; padding: 10px 14px; }
+    .reset { display: none; }
+    .timeline { gap: 14px; }
+    .step, .card { break-inside: avoid; page-break-inside: avoid; }
+    .card { box-shadow: none; padding: 14px 16px; }
+    .card label:hover { background: none; }
+    .btn { background: none; color: var(--accent); padding: 0; border-radius: 0; text-decoration: underline; }
+    .url { display: block; }
+    footer { margin-top: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <span class="tag">Guia de estudos</span>
+    <h1>Roadmap de Desenvolvimento Beebop</h1>
+    <p>Um caminho em quatro fases, do controle de versão até o primeiro portfólio.</p>
+  </header>
+
+  <div class="overall" id="overall">
+    <div class="overall-top">
+      <strong>Progresso geral</strong>
+      <span id="overallText">0 de 0 concluídos (0%)</span>
+      <button class="reset" id="resetBtn" type="button">Limpar progresso</button>
+    </div>
+    <div class="bar" id="overallBar"><i></i></div>
+  </div>
+
+  <main class="timeline">
+
+    <section class="step">
+      <div class="badge">1</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="phase">Fase 1</span>
+          <span class="count"></span>
+        </div>
+        <h2>Ferramentas e Fundamentos</h2>
+        <p class="desc">Aprenda a versionar e publicar código antes de escrever projetos maiores.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>Conceitos de controle de versão</span></label></li>
+          <li><label><input type="checkbox"><span>Comandos básicos do Git: commit, branch, merge</span></label></li>
+          <li><label><input type="checkbox"><span>Criar repositórios e publicar no GitHub</span></label></li>
+          <li><label><input type="checkbox"><span>Fluxo de trabalho com branches e pull requests</span></label></li>
+        </ul>
+        <p class="meta">Duração sugerida: 1 a 2 semanas</p>
+        <a class="btn" href="https://cursosgratuitos.fgv.br/curso/introducao-ao-git-e-github" target="_blank" rel="noopener noreferrer">Curso: Introdução ao Git e GitHub (FGV)</a>
+        <span class="url">https://cursosgratuitos.fgv.br/curso/introducao-ao-git-e-github</span>
+      </article>
+    </section>
+
+    <section class="step">
+      <div class="badge">2</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="phase">Fase 2</span>
+          <span class="count"></span>
+        </div>
+        <h2>Prática com HTML, CSS e JavaScript</h2>
+        <p class="desc">Construa a base da web com exercícios guiados e pequenos projetos.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>HTML semântico e acessibilidade básica</span></label></li>
+          <li><label><input type="checkbox"><span>CSS: Flexbox, Grid e design responsivo</span></label></li>
+          <li><label><input type="checkbox"><span>JavaScript: variáveis, funções, DOM e eventos</span></label></li>
+          <li><label><input type="checkbox"><span>Mini projetos: página pessoal, lista de tarefas, galeria</span></label></li>
+        </ul>
+        <p class="meta">Duração sugerida: 6 a 10 semanas</p>
+        <a class="btn" href="https://www.netacad.com/learning-collections/web-development?courseLang=en-US" target="_blank" rel="noopener noreferrer">Cursos de Web Development (NetAcad)</a>
+        <span class="url">https://www.netacad.com/learning-collections/web-development?courseLang=en-US</span>
+      </article>
+    </section>
+
+    <section class="step">
+      <div class="badge">3</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="phase">Fase 3</span>
+          <span class="count"></span>
+        </div>
+        <h2>Avançado: Ecossistema Front-end</h2>
+        <p class="desc">Use o mapa do roadmap.sh para escolher e aprofundar as próximas tecnologias.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>Um framework: React, Vue ou Angular</span></label></li>
+          <li><label><input type="checkbox"><span>Gerenciadores de pacotes e ferramentas de build</span></label></li>
+          <li><label><input type="checkbox"><span>Consumo de APIs e gerenciamento de estado</span></label></li>
+          <li><label><input type="checkbox"><span>Testes, desempenho e boas práticas</span></label></li>
+        </ul>
+        <p class="meta">Duração sugerida: 2 a 4 meses</p>
+        <a class="btn" href="https://roadmap.sh/frontend" target="_blank" rel="noopener noreferrer">Abrir Roadmap Front-end (roadmap.sh)</a>
+        <span class="url">https://roadmap.sh/frontend</span>
+      </article>
+    </section>
+
+    <section class="step">
+      <div class="badge">4</div>
+      <article class="card">
+        <div class="card-head">
+          <span class="phase">Fase 4</span>
+          <span class="count"></span>
+        </div>
+        <h2>Portfólio e Carreira</h2>
+        <p class="desc">Reúna o que aprendeu em projetos publicados e mostre seu trabalho.</p>
+        <ul>
+          <li><label><input type="checkbox"><span>3 a 5 projetos completos, publicados online</span></label></li>
+          <li><label><input type="checkbox"><span>README bem escrito em cada repositório</span></label></li>
+          <li><label><input type="checkbox"><span>Perfil do GitHub e LinkedIn atualizados</span></label></li>
+          <li><label><input type="checkbox"><span>Contribuições em projetos abertos e candidaturas</span></label></li>
+        </ul>
+        <p class="meta">Duração sugerida: contínuo</p>
+      </article>
+    </section>
+
+  </main>
+
+  <footer>Seu progresso fica salvo neste navegador. Revise o roadmap a cada mês.</footer>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = "roadmap-frontend-v1";
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.card input[type="checkbox"]'));
+  var overallText = document.getElementById("overallText");
+  var overallBar = document.getElementById("overallBar");
+  var resetBtn = document.getElementById("resetBtn");
+
+  // Atribui um id estável a cada checkbox: fase-item
+  steps.forEach(function (step, s) {
+    Array.prototype.forEach.call(step.querySelectorAll('input[type="checkbox"]'), function (box, i) {
+      box.dataset.key = "p" + (s + 1) + "-i" + (i + 1);
+    });
+  });
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function save() {
+    var state = {};
+    boxes.forEach(function (b) { if (b.checked) state[b.dataset.key] = true; });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function update() {
+    var total = boxes.length;
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    var pct = total ? Math.round((done / total) * 100) : 0;
+
+    overallText.textContent = done + " de " + total + " concluídos (" + pct + "%)";
+    overallBar.firstElementChild.style.width = pct + "%";
+    overallBar.classList.toggle("done", total > 0 && done === total);
+
+    steps.forEach(function (step) {
+      var list = step.querySelectorAll('input[type="checkbox"]');
+      var checked = step.querySelectorAll('input[type="checkbox"]:checked').length;
+      step.querySelector(".count").textContent = checked + "/" + list.length;
+      step.classList.toggle("complete", list.length > 0 && checked === list.length);
+    });
+  }
+
+  var saved = load();
+  boxes.forEach(function (b) {
+    b.checked = !!saved[b.dataset.key];
+    b.addEventListener("change", function () { save(); update(); });
+  });
+
+  resetBtn.addEventListener("click", function () {
+    if (!window.confirm("Limpar todo o progresso?")) return;
+    boxes.forEach(function (b) { b.checked = false; });
+    save();
+    update();
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
